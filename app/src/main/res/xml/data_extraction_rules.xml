@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Exclude the encrypted DB and the wrapped key from cloud/device-transfer backups.
+     The key is device-bound, so backing up the DB would be useless and a leak surface. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="database" path="metricmind.db" />
+        <exclude domain="database" path="metricmind.db-journal" />
+        <exclude domain="database" path="metricmind.db-wal" />
+        <exclude domain="database" path="metricmind.db-shm" />
+        <exclude domain="sharedpref" path="metricmind_secure_prefs.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="database" path="metricmind.db" />
+        <exclude domain="sharedpref" path="metricmind_secure_prefs.xml" />
+    </device-transfer>
+</data-extraction-rules>

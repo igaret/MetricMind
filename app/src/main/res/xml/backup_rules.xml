@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Legacy (API < 31) backup rules. We disable backup entirely (allowBackup=false). -->
+<full-backup-content>
+    <exclude domain="database" path="metricmind.db" />
+    <exclude domain="sharedpref" path="metricmind_secure_prefs.xml" />
+</full-backup-content>
