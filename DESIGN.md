@@ -117,6 +117,8 @@ Subsequent launches:
 
 **Pick Vico.** It is Compose-first (matches our UI), Material3-themable, actively maintained, and avoids `AndroidView` interop friction. MPAndroidChart is powerful but View-based and stale. All rendering is on-device; no network. For correlation scatter + Pearson r we compute stats locally (`domain/usecase/Correlation.kt`) and feed points to Vico.
 
+Vico is wired into the Insights screen (`ui/insights/InsightsScreen.kt`): a `CartesianChartModelProducer` is fed the selected metric's daily series inside a `LaunchedEffect`, rendered by `CartesianChartHost` with a line layer and start/bottom axes. The trend chart updates reactively when the user changes metric or range.
+
 ---
 
 ## 5. Permissions & device-derived metrics
