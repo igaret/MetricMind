@@ -4,9 +4,11 @@ import android.content.Context
 import com.metricmind.data.repository.HabitRepositoryImpl
 import com.metricmind.data.repository.MetricRepositoryImpl
 import com.metricmind.data.repository.ScreenTimeRepositoryImpl
+import com.metricmind.data.repository.VitalsRepositoryImpl
 import com.metricmind.domain.repository.HabitRepository
 import com.metricmind.domain.repository.MetricRepository
 import com.metricmind.domain.repository.ScreenTimeRepository
+import com.metricmind.domain.repository.VitalsRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -26,6 +28,9 @@ abstract class RepositoryModule {
 
     @Binds @Singleton
     abstract fun bindScreenTimeRepository(impl: ScreenTimeRepositoryImpl): ScreenTimeRepository
+
+    @Binds @Singleton
+    abstract fun bindVitalsRepository(impl: VitalsRepositoryImpl): VitalsRepository
 }
 
 @Module

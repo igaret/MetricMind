@@ -11,6 +11,7 @@ import com.metricmind.data.local.entity.HabitEntity
 import com.metricmind.data.local.entity.HabitTaskEntity
 import com.metricmind.data.local.entity.MetricEntryEntity
 import com.metricmind.data.local.entity.ScreenTimeDailyEntity
+import com.metricmind.data.local.entity.VitalReadingEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -63,6 +64,27 @@ interface HabitTaskDao {
     /** Returns the days this habit was completed, most recent first, for streak math. */
     @Query("SELECT day FROM habit_task WHERE habitId = :habitId AND status = 'DONE' ORDER BY day DESC")
     suspend fun completedDays(habitId: Long): List<Long>
+}
+
+@Dao
+interface VitalDao {
+    @Insert
+    suspend fun insert(reading: VitalReadingEntity): Long
+
+    @Query("SELECT * FROM vital_reading WHERE type = :type ORDER BY timestamp DESC LIMIT :limit")
+    fun observeRecent(type: String, limit: Int): Flow<List<VitalReadingEntity>>
+
+    @Query("SELECT * FROM vital_reading ORDER BY timestamp DESC LIMIT :limit")
+    fun observeAllRecent(limit: Int): Flow<List<VitalReadingEntity>>
+
+    @Query("UPDATE vital_reading SET verification = :verification, correctedValue = :correctedValue WHERE id = :id")
+    suspend fun setVerification(id: Long, verification: String, correctedValue: Float?)
+
+    @Query("SELECT COUNT(*) FROM vital_reading WHERE type = :type")
+    suspend fun countAll(type: String): Int
+
+    @Query("SELECT COUNT(*) FROM vital_reading WHERE type = :type AND verification = :verification")
+    suspend fun countByVerification(type: String, verification: String): Int
 }
 
 @Dao

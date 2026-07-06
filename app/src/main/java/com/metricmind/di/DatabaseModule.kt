@@ -8,6 +8,7 @@ import com.metricmind.data.local.dao.HabitDao
 import com.metricmind.data.local.dao.HabitTaskDao
 import com.metricmind.data.local.dao.MetricDao
 import com.metricmind.data.local.dao.ScreenTimeDao
+import com.metricmind.data.local.dao.VitalDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,7 +31,7 @@ object DatabaseModule {
         val factory = SupportOpenHelperFactory(keyManager.databasePassphrase())
         return Room.databaseBuilder(context, MetricMindDatabase::class.java, MetricMindDatabase.NAME)
             .openHelperFactory(factory)
-            // Migrations are added explicitly as the schema evolves; no destructive fallback.
+            .addMigrations(MetricMindDatabase.MIGRATION_1_2)
             .build()
     }
 
@@ -38,4 +39,5 @@ object DatabaseModule {
     @Provides fun habitDao(db: MetricMindDatabase): HabitDao = db.habitDao()
     @Provides fun habitTaskDao(db: MetricMindDatabase): HabitTaskDao = db.habitTaskDao()
     @Provides fun screenTimeDao(db: MetricMindDatabase): ScreenTimeDao = db.screenTimeDao()
+    @Provides fun vitalDao(db: MetricMindDatabase): VitalDao = db.vitalDao()
 }

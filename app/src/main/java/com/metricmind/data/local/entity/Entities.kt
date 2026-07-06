@@ -8,6 +8,8 @@ import com.metricmind.domain.model.HabitTemplate
 import com.metricmind.domain.model.MetricType
 import com.metricmind.domain.model.ReminderMode
 import com.metricmind.domain.model.TaskStatus
+import com.metricmind.domain.model.VitalType
+import com.metricmind.domain.model.VitalVerification
 
 @Entity(
     tableName = "metric_entry",
@@ -55,6 +57,19 @@ data class ScreenTimeDailyEntity(
     val totalMinutes: Int,
     val topPackage: String?,
     val topMinutes: Int,
+)
+
+@Entity(
+    tableName = "vital_reading",
+    indices = [Index(value = ["type", "timestamp"])],
+)
+data class VitalReadingEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val type: VitalType,
+    val value: Float,
+    val timestamp: Long,
+    val verification: VitalVerification,
+    val correctedValue: Float?,
 )
 
 @Entity(tableName = "habit")

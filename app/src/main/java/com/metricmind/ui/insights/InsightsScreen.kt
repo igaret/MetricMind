@@ -1,6 +1,5 @@
 package com.metricmind.ui.insights
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,14 +14,21 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.metricmind.domain.model.MetricType
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 
 @Composable
 fun InsightsScreen(vm: InsightsViewModel = hiltViewModel()) {
@@ -81,29 +87,25 @@ fun InsightsScreen(vm: InsightsViewModel = hiltViewModel()) {
 }
 
 /**
- * Minimal on-device line chart for the scaffold (zero extra deps, guaranteed to compile).
- * Production recommendation is Vico — see DESIGN.md §4 for the drop-in Vico Composable.
+ * On-device line chart backed by Vico (Compose-native, see DESIGN.md §4).
+ * Renders nothing until at least two points exist so empty states stay clean.
  */
 @Composable
 private fun LineChart(values: List<Float>, modifier: Modifier = Modifier) {
-    val color = MaterialTheme.colorScheme.primary
-    Canvas(modifier = modifier) {
-        if (values.size < 2) return@Canvas
-        val maxV = values.max()
-        val minV = values.min()
-        val span = (maxV - minV).takeIf { it != 0f } ?: 1f
-        val stepX = size.width / (values.size - 1)
-        val path = Path()
-        values.forEachIndexed { i, v ->
-            val x = stepX * i
-            val y = size.height - ((v - minV) / span) * size.height
-            if (i == 0) path.moveTo(x, y) else path.lineTo(x, y)
-        }
-        drawPath(path, color = color, style = androidx.compose.ui.graphics.drawscope.Stroke(width = 6f))
-        values.forEachIndexed { i, v ->
-            val x = stepX * i
-            val y = size.height - ((v - minV) / span) * size.height
-            drawCircle(color = color, radius = 7f, center = Offset(x, y))
+    if (values.size < 2) return
+    val modelProducer = remember { CartesianChartModelProducer() }
+    LaunchedEffect(values) {
+        modelProducer.runTransaction {
+            lineSeries { series(values) }
         }
     }
+    CartesianChartHost(
+        chart = rememberCartesianChart(
+            rememberLineCartesianLayer(),
+            startAxis = rememberStartAxis(),
+            bottomAxis = rememberBottomAxis(),
+        ),
+        modelProducer = modelProducer,
+        modifier = modifier,
+    )
 }
