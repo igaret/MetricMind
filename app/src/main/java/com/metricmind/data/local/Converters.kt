@@ -5,6 +5,8 @@ import com.metricmind.domain.model.HabitTemplate
 import com.metricmind.domain.model.MetricType
 import com.metricmind.domain.model.ReminderMode
 import com.metricmind.domain.model.TaskStatus
+import com.metricmind.domain.model.VitalType
+import com.metricmind.domain.model.VitalVerification
 
 /** Enums are stored by name (stable across versions; never reorder/rename without a migration). */
 class Converters {
@@ -19,4 +21,10 @@ class Converters {
 
     @TypeConverter fun statusToString(v: TaskStatus): String = v.name
     @TypeConverter fun stringToStatus(v: String): TaskStatus = TaskStatus.valueOf(v)
+
+    @TypeConverter fun vitalToString(v: VitalType): String = v.name
+    @TypeConverter fun stringToVital(v: String): VitalType = VitalType.valueOf(v)
+
+    @TypeConverter fun verificationToString(v: VitalVerification): String = v.name
+    @TypeConverter fun stringToVerification(v: String): VitalVerification = VitalVerification.valueOf(v)
 }

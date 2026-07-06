@@ -5,6 +5,10 @@ import com.metricmind.domain.model.HabitTask
 import com.metricmind.domain.model.MetricEntry
 import com.metricmind.domain.model.MetricType
 import com.metricmind.domain.model.ScreenTimeDay
+import com.metricmind.domain.model.VitalAccuracy
+import com.metricmind.domain.model.VitalReading
+import com.metricmind.domain.model.VitalType
+import com.metricmind.domain.model.VitalVerification
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -25,6 +29,14 @@ interface HabitRepository {
     suspend fun setTaskStatus(taskId: Long, status: com.metricmind.domain.model.TaskStatus)
     suspend fun taskExists(habitId: Long, day: LocalDate): Boolean
     suspend fun currentStreak(habitId: Long, today: LocalDate): Int
+}
+
+interface VitalsRepository {
+    fun observeRecent(type: VitalType, limit: Int = 20): Flow<List<VitalReading>>
+    fun observeAllRecent(limit: Int = 20): Flow<List<VitalReading>>
+    suspend fun record(type: VitalType, value: Float): VitalReading
+    suspend fun verify(id: Long, verification: VitalVerification, correctedValue: Float? = null)
+    suspend fun accuracy(type: VitalType): VitalAccuracy
 }
 
 interface ScreenTimeRepository {

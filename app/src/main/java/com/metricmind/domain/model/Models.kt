@@ -61,6 +61,46 @@ data class HabitTask(
     val status: TaskStatus = TaskStatus.PENDING,
 )
 
+/** Body-sensor vitals captured on demand (never in the background). */
+enum class VitalType(val unit: String) {
+    HEART_RATE("bpm"),
+    BODY_TEMP("\u00b0C"),
+    /** 0 = awake, 1 = asleep (heuristic estimate). */
+    SLEEP_STATE(""),
+}
+
+/** User feedback on how accurate a sensor reading was. */
+enum class VitalVerification { UNVERIFIED, CONFIRMED, CORRECTED }
+
+data class VitalReading(
+    val id: Long = 0,
+    val type: VitalType,
+    val value: Float,
+    val timestamp: Long,
+    val verification: VitalVerification = VitalVerification.UNVERIFIED,
+    /** Value the user says is correct, when verification == CORRECTED. */
+    val correctedValue: Float? = null,
+)
+
+/** Per-sensor accuracy derived from user verifications. */
+data class VitalAccuracy(
+    val type: VitalType,
+    val total: Int,
+    val confirmed: Int,
+    val corrected: Int,
+) {
+    val verified: Int get() = confirmed + corrected
+    /** Percent of verified readings the user confirmed as correct; null until something is verified. */
+    val percentCorrect: Int? get() = if (verified == 0) null else (confirmed * 100) / verified
+}
+
+/** Result of the offline awake/asleep heuristic. */
+data class SleepEstimate(
+    val asleep: Boolean,
+    /** 0..1 confidence in the estimate. */
+    val confidence: Float,
+)
+
 /** A point pair for correlation/scatter analysis. */
 data class CorrelationResult(
     val n: Int,

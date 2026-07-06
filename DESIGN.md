@@ -129,6 +129,13 @@ Vico is wired into the Insights screen (`ui/insights/InsightsScreen.kt`): a `Car
 | `POST_NOTIFICATIONS` (API 33+) | Daily habit reminder | When user creates first habit / enables reminders |
 | `SCHEDULE_EXACT_ALARM` / `USE_EXACT_ALARM` | Only if exact-time reminders chosen (else WorkManager) | At reminder setup; prefer inexact to avoid the permission |
 | `RECEIVE_BOOT_COMPLETED` | Reschedule reminders after reboot | Declared only; no runtime prompt |
+| `BODY_SENSORS` (runtime) | On-demand heart-rate reading (`Sensor.TYPE_HEART_RATE`) | Only when the user taps *Measure* on the Vitals card |
+
+**Vitals (beta) — body sensors, fully on-device:** the Home screen's Vitals card measures on demand only (nothing samples in the background):
+- **Heart rate**: `TYPE_HEART_RATE` where the hardware exists (`uses-feature` optional, so phones without it can still install). Gracefully reports "no sensor" otherwise.
+- **Temperature**: `TYPE_AMBIENT_TEMPERATURE`, labeled honestly as *ambient* — phones don't expose true body temperature.
+- **Awake/asleep**: an offline heuristic (`SleepHeuristic`) combining accelerometer stillness (~3 s sample), screen interactivity, and hour-of-day into a confidence-scored estimate. Deliberately avoids the Google Sleep API, which would require Play Services — this keeps the no-network promise intact.
+- **User verification loop**: every reading prompts "Was this accurate?" — *Looks right* / *It's off (enter correct value)*. Verifications are stored (`vital_reading.verification` = UNVERIFIED/CONFIRMED/CORRECTED) and the card reports measured per-sensor accuracy ("Heart rate: 80% correct, 10 of 12 readings verified"). Readings live in the same SQLCipher DB (schema v2, `MIGRATION_1_2`).
 
 **No `INTERNET` permission in MVP** — strongest possible privacy signal.
 

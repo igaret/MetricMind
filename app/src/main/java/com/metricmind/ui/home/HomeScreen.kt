@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.metricmind.domain.model.MetricType
 import com.metricmind.domain.model.TaskStatus
+import com.metricmind.ui.vitals.VitalsCard
 
 @Composable
 fun HomeScreen(vm: HomeViewModel = hiltViewModel()) {
@@ -61,6 +62,8 @@ fun HomeScreen(vm: HomeViewModel = hiltViewModel()) {
                 }
             }
         }
+
+        item { VitalsCard() }
 
         item { Text("Today's habits", style = androidx.compose.material3.MaterialTheme.typography.titleLarge) }
 
