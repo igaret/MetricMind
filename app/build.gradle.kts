@@ -17,11 +17,11 @@ fun secret(name: String): String? =
     keystoreProps.getProperty(name) ?: (project.findProperty(name) as String?)
 
 android {
-    namespace = "com.metricmind"
+    namespace = "net.rslvd.metricmind"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.metricmind"
+        applicationId = "net.rslvd.metricmind"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
